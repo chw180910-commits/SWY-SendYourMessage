@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Send Your Message</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #fdfdfd; /* pastel ivory */
+      font-family: 'Quicksand', 'Baloo 2', cursive;
+      text-align: center;
+      color: #444;
+      padding: 20px;
+    }
+    h1 {
+      margin-top: 20px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 2rem;
+    }
+    p.tagline {
+      margin-top: 10px;
+      color: #6b7280;
+      font-size: 1.1rem;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    button {
+      background-color: #dbeafe; /* pastel soft blue */
+      border: none;
+      padding: 16px 32px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-family: 'Baloo 2', cursive;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #1e3a8a;
+    }
+    button:hover {
+      background-color: #c7d2fe;
+    }
+    #browse-section, #menfess-section {
+      display: none;
+      margin-top: 30px;
+    }
+    textarea, input {
+      width: 90%;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'Quicksand', cursive;
+      border: 1px solid #d1d5db;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    textarea {
+      height: 120px;
+    }
+    /* Responsive untuk HP */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6rem; }
+      p.tagline { font-size: 1rem; }
+      button { width: 100%; font-size: 16px; }
+      textarea, input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Send Your Message</h1>
+  <p class="tagline">Say it with words, vibe it with songs — because feelings sound better with music.</p>
+
+  <div class="button-container">
+    <button id="browse-btn">Browse</button>
+    <button id="menfess-btn">Menfess</button>
+  </div>
+
+  <!-- Browse Section -->
+  <div id="browse-section">
+    <h2>Search by Name</h2>
+    <input type="text" id="searchName" placeholder="Type a name...">
+    <button id="searchNameBtn">Go</button>
+    <div id="browseResult"></div>
+  </div>
+
+  <!-- Menfess Section -->
+  <div id="menfess-section">
+    <h2>Write Your Menfess</h2>
+    <textarea placeholder="Write your message..."></textarea><br>
+    <input type="text" id="searchSong" placeholder="Find a song on Spotify...">
+    <button id="searchSongBtn">Search Song</button>
+    <div id="songResult"></div><br>
+    <button>Send</button>
+  </div>
+
+  <script>
+    // toggle sections
+    document.getElementById('browse-btn').addEventListener('click', () => {
+      document.getElementById('browse-section').style.display = 'block';
+      document.getElementById('menfess-section').style.display = 'none';
+    });
+
+    document.getElementById('menfess-btn').addEventListener('click', () => {
+      document.getElementById('menfess-section').style.display = 'block';
+      document.getElementById('browse-section').style.display = 'none';
+    });
+
+    // dummy search name
+    document.getElementById('searchNameBtn').addEventListener('click', () => {
+      const name = document.getElementById('searchName').value;
+      document.getElementById('browseResult').innerHTML = "Results for: " + name;
+    });
+
+    // Spotify search (needs real token)
+    async function searchSong() {
+      const query = document.getElementById('searchSong').value;
+      const token = "SPOTIFY_ACCESS_TOKEN"; // replace with real token
+      const res = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const track = data.tracks.items[0];
+      document.getElementById('songResult').innerHTML = `
+        <iframe style="border-radius:12px" 
+          src="https://open.spotify.com/embed/track/${track.id}" 
+          width="300" height="80" frameBorder="0" 
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture">
+        </iframe>
+      `;
+    }
+    document.getElementById('searchSongBtn').addEventListener('click', searchSong);
+  </script>
+</body>
+</html>

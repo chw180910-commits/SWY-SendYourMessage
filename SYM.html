@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Send You Massage</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { font-size: 2.5em; }
+    input, textarea {
+      width: 80%; padding: 10px; margin: 10px 0;
+      border-radius: 8px; border: none; outline: none;
+    }
+    button {
+      background: #ff6f61; color: white; border: none;
+      padding: 12px 20px; border-radius: 8px; cursor: pointer;
+      margin: 10px;
+    }
+    button:hover { background: #ff3b2e; }
+    #results {
+      margin-top: 20px; background: #fff; padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } 
+      from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7U9uoDBgZpwPHVLG118Fd0WX_HSUri80",
+      authDomain: "send-your-messege.firebaseapp.com",
+      projectId: "send-your-messege",
+      storageBucket: "send-your-messege.firebasestorage.app",
+      messagingSenderId: "1046285174533",
+      appId: "1:1046285174533:web:a5d5d89c504afb4c94996c",
+      measurementId: "G-3HZCJJMY4W"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function sendMessage() {
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+      const song = document.getElementById("song").value;
+
+      if (!name || !message || !song) {
+        alert("Yo fam, fill all the vibes first 😎");
+        return;
+      }
+
+      await addDoc(collection(db, "messages"), { name, message, song });
+      alert("Yo! Your vibe is sent ✨");
+    }
+
+    async function browseMessages() {
+      const searchName = document.getElementById("searchName").value;
+      const q = query(collection(db, "messages"), where("name", "==", searchName));
+      const querySnapshot = await getDocs(q);
+
+      let result = "";
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        result += `<p><b>${data.name}</b>: ${data.message} 🎶 <i>${data.song}</i></p>`;
+      });
+      document.getElementById("results").innerHTML = result || "Oops, no vibes found 😅";
+    }
+
+    window.onload = () => {
+      document.getElementById("tellStory").addEventListener("click", sendMessage);
+      document.getElementById("browse").addEventListener("click", browseMessages);
+    };
+  </script>
+</head>
+<body>
+  <h1>Welcome to Send You Massage 💌</h1>
+  <p>Hey there! This is the place where your words meet your songs… and maybe someone’s smile too 😎.</p>
+
+  <h2>Tell Your Story 🚀</h2>
+  <input id="name" placeholder="Who’s the lucky one?"><br>
+  <textarea id="message" placeholder="Spill your words..."></textarea><br>
+  <input id="song" placeholder="Song that hits different"><br>
+  <button id="tellStory">Tell Your Story</button>
+
+  <h2>Browse Messages 🔍</h2>
+  <input id="searchName" placeholder="Search by name"><br>
+  <button id="browse">Browse</button>
+  <div id="results"></div>
+</body>
+</html>
